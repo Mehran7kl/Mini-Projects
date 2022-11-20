@@ -173,7 +173,7 @@ light.castShadow = true;
 
 renderer.compile(scene,camera);
 console.timeEnd("creation time");
-
+alert("You can rotate camera");
 renderer.setAnimationLoop(animate);
 
 function animate(time) 
