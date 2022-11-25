@@ -102,7 +102,7 @@ stats.showPanel(0);
 const inputPanel=new InputPanel();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.set(0,5,-5);
+camera.position.set(6,3,-12);
 camera.lookAt(0,0,0);
 scene.add(camera);
 const renderer = new THREE.WebGLRenderer();
@@ -122,9 +122,12 @@ addEventListener("resize",resize );
 document.body.appendChild( renderer.domElement );
 const physics=new Physics();
 
+
 inputPanel.add(physics,"speed",0.25,10,0.25)
 const sphereGeo=new THREE.SphereGeometry();
-
+const uniforms={
+	planets:{value:[]}
+}
 function addPlanet(isStar, color ,radius, mass, pos , v)
 {
 	let mat;
@@ -150,15 +153,57 @@ function addPlanet(isStar, color ,radius, mass, pos , v)
 	p.position.copy(pos);
 	physics.set(p,{mass,velocity:v.clone(), gravityCast:true, gravityReceive:true});
 	scene.add(p);
+	uniforms.planets.value.push({
+		pos:p.position,
+		mass,
+	});
+	addPlanet.count++;
+	
 	return p;
 }
+addPlanet.count=0;
+const sun=addPlanet(true,0xffff1f,1,1e10,vec3a.set(0,0,0),vec3b.set(0,0,0) );
+addPlanet(false,0x8585ff,0.3,2e9,vec3a.set(0,0,8.7),vec3b.set(0.3,0.,0) );
+addPlanet(false,0xf5f5ff,0.1,1,vec3a.set(0,0,8.0),vec3b.set(0.73,0.,0) );
 
-const sun=addPlanet(true,0xffff1f,1,9e9,vec3a.set(0,0,0),vec3b.set(0,0,0) );
-addPlanet(false,0x8585ff,0.3,1e9,vec3a.set(0,0,5.4),vec3b.set(0.3,0.,0) );
-addPlanet(false,0xf5f5ff,0.1,1,vec3a.set(0,0,4.0),vec3b.set(0.53,0.,0) );
-const grid=new THREE.GridHelper(20,20);
-scene.add(grid);
-
+const planeGeo=new THREE.PlaneGeometry(40,40,100,100);
+planeGeo.rotateX(-Math.PI/2);
+const material=new THREE.PointsMaterial({
+	size:0.1,
+	onBeforeCompile(s){
+		
+	Object.assign(s.uniforms, uniforms)
+	s.vertexShader=`
+	
+	struct Planet{
+		float mass;
+		vec3 pos;
+	};
+	uniform Planet planets[${addPlanet.count}];
+	${s.vertexShader}
+	`.replace("#include <begin_vertex>",`
+	#include <begin_vertex>
+	vec3 g=vec3(0.0);
+	vec3 d;
+	#pragma unroll_loop_start
+	for(int i=0;i<${addPlanet.count};i++){
+		d = position - planets[i].pos;
+		g+=(5e-10*planets[i].mass/dot(d,d))*d;
+	}
+	#pragma unroll_loop_end
+	transformed.y-=smoothstep(0.,3.,length(g));
+	`);
+	log(s.vertexShader)
+	s.fragmentShader=s.fragmentShader.replace("#include <clipping_planes_fragment>",`
+		#include <clipping_planes_fragment>
+		//makes points round
+		if(length(gl_PointCoord-0.5)>0.5)discard;
+	`);
+	
+}});
+const plane=new THREE.Points(planeGeo, material );
+scene.add(plane);
+plane.translateY(-1.0)
 const light=new THREE.PointLight();
 light.position.copy(sun.position);
 scene.add( light );
@@ -170,10 +215,9 @@ light.shadow.camera.near = 0.5; // default 0.5
 light.shadow.camera.far = 500; //
 light.castShadow = true; 
 
-
 renderer.compile(scene,camera);
 console.timeEnd("creation time");
-alert("You can rotate camera");
+
 renderer.setAnimationLoop(animate);
 
 function animate(time) 
@@ -181,8 +225,9 @@ function animate(time)
 	physics.do(scene);
 	orbitCon.update();
 	light.position.copy(sun.position);
-	renderer.render( scene, camera);
 	
+	renderer.render( scene, camera);
+	//Do you feel the points are big or non-perspective ? If yes, let me know.
 	//Do you feel some suddenly slow frames after a few 60fps seconds ?
 	//If yes let me know , tell me in the issues
 	customStat.update(50,100);
