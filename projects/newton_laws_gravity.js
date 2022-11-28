@@ -230,7 +230,8 @@ function animate(time)
 	//Do you feel the points are big or non-perspective ? If yes, let me know.
 	//Do you feel some suddenly slow frames after a few 60fps seconds ?
 	//If yes let me know , tell me in the issues
-	customStat.update(50,100);
+	
 	stats.update();
 }
+
 
