@@ -233,4 +233,4 @@ function animate(time)
 	customStat.update(50,100);
 	stats.update();
 }
-//
+
