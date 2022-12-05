@@ -5,6 +5,7 @@ import {OrbitControls} from "../library/ThreeJs/OrbitControls.js";
 
 const log=console.log.bind(console);
 
+
 const vec3a=new THREE.Vector3();
 const vec3b=new THREE.Vector3();
 const vec3c=new THREE.Vector3();
@@ -92,7 +93,7 @@ function Physics()
 	}
 }
 
-console.time("creation time");
+
 const stats=new Stats();
 const customStat=new Stats.Panel("calls","#000","#ddd");
 stats.addPanel(customStat)
@@ -193,14 +194,23 @@ const material=new THREE.PointsMaterial({
 	#pragma unroll_loop_end
 	transformed.y-=smoothstep(0.,3.,length(g));
 	`);
-	log(s.vertexShader)
+	
 	s.fragmentShader=s.fragmentShader.replace("#include <clipping_planes_fragment>",`
 		#include <clipping_planes_fragment>
 		//makes points round
+		/*{
+		
 		if(length(gl_PointCoord-0.5)>0.5)discard;
+		}*/
+		//avoid implicit square root in length function 
+		{
+		vec2 pd=gl_PointCoord-0.5;
+		if(dot(pd,pd)>0.25)discard;
+		}
 	`);
 	
 }});
+
 const plane=new THREE.Points(planeGeo, material );
 scene.add(plane);
 plane.translateY(-1.0)
@@ -215,13 +225,12 @@ light.shadow.camera.near = 0.5; // default 0.5
 light.shadow.camera.far = 500; //
 light.castShadow = true; 
 
-renderer.compile(scene,camera);
-console.timeEnd("creation time");
-
 renderer.setAnimationLoop(animate);
 
 function animate(time) 
 {
+	if(renderer.info.render.frame===1)
+		log(`rendered at ${Math.floor(performance.now())}ms`);
 	physics.do(scene);
 	orbitCon.update();
 	light.position.copy(sun.position);
