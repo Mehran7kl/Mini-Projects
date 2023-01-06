@@ -129,6 +129,7 @@ const sphereGeo=new THREE.SphereGeometry();
 const uniforms={
 	planets:{value:[]}
 }
+
 function addPlanet(isStar, color ,radius, mass, pos , v)
 {
 	let mat;
@@ -215,8 +216,8 @@ const plane=new THREE.Points(planeGeo, material );
 scene.add(plane);
 plane.translateY(-1.0)
 const light=new THREE.PointLight();
-light.position.copy(sun.position);
-scene.add( light );
+
+scene.add(light);
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 light.shadow.mapSize.width = 256; // default 512
@@ -227,20 +228,27 @@ light.castShadow = true;
 
 renderer.setAnimationLoop(animate);
 
+
 function animate(time) 
 {
-	if(renderer.info.render.frame===1)
-		log(`rendered at ${Math.floor(performance.now())}ms`);
 	physics.do(scene);
 	orbitCon.update();
 	light.position.copy(sun.position);
 	
 	renderer.render( scene, camera);
+	
 	//Do you feel the points are big or non-perspective ? If yes, let me know.
 	//Do you feel some suddenly slow frames after a few 60fps seconds ?
 	//If yes let me know , tell me in the issues
 	
 	stats.update();
 }
+
+
+//On second frame anything has been almost done
+requestAnimationFrame(t=>
+requestAnimationFrame(t=>
+    log(`done at ${Math.floor(performance.now())}ms`)
+));
 
 
