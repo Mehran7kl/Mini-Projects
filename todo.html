@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> </title>
+    
+    <style>
+        /* #todo-list{
+            
+        } */
+    </style>
+</head>
+<body>
+    <form id="todo-list"> 
+       <div> 
+            <input id="todo-title" placeholder="title" required/> 
+            <button>+</button>
+            <table id="plan"></table>
+        </div>
+    </form>
+    <script>
+"use strict";
+
+class Task{
+    
+    constructor(title="", date=null){
+        this.title=title;
+        this.date = date&&new Date(date);
+        
+    }
+
+}
+const todoList = document.getElementById("todo-list");
+const todoTitle = document.getElementById("todo-title");
+
+function addTodo(e)
+{
+    e.preventDefault();
+    console.log(e);
+    if(todoTitle.value=="")return;
+    const form = e.target;
+    
+    const item= document.createElement("input");
+    item.setAttribute("type","checkbox");
+    item.setAttribute("data-add-date",Date());
+    
+    const label=document.createElement("label");
+    label.innerText = todoTitle.value;
+    todoTitle.value = "";
+    
+    const div = document.createElement("div");
+    div.append(item);
+    div.append(label);
+    
+    form.append(document.createElement("br"));
+    form.append(div);
+    
+}
+
+todoList.addEventListener("submit",addTodo);
+    </script>
+</body>
+</html>

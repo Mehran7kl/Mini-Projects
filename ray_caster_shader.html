@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=0.0" >
+		<title> Ray Caster Using  Fragment Shader</title>
+		
+		<style>
+			body { margin: 0; }
+		</style>
+		
+	</head>
+	<body>
+
+<script id="vxShader" type="x-shader">
+
+in vec3 position;
+void main(){
+	gl_Position=vec4(position , 1.0);
+}
+</script>
+<script id="fgShader" type="x-shader">
+precision highp float;
+out vec4 fragColor;
+uniform float time;
+uniform vec2 resolution;
+uniform vec2 touch;
+
+
+float rand(vec2 seed){
+	return fract(123456.7*
+						sin(
+								dot(seed,vec2(12.6157,1352.9373))
+							)
+						);
+}
+
+float noise(vec2 uv){
+	vec2 i=floor(uv);
+	vec2 f=fract(uv);
+	f=smoothstep(0.0,1.0,f);
+	float v00=rand(i);
+	float v10=rand(i+vec2(1.0,0.0));
+	float v01=rand(i+vec2(0.0,1.0));
+	float v11=rand(i+1.0);
+	
+	return mix(mix(v00,v01,f.y),mix(v10,v11,f.y),f.x);
+	
+}
+vec2 calcUv(){
+	return (2.0*(gl_FragCoord.xy)/resolution-1.0)
+		*vec2(1.0, resolution.x/resolution.y);
+}
+vec3 rayInit(vec2 uv){
+	return vec3(uv,1.0);
+}
+void main()
+{
+	vec2 uv=calcUv();
+	vec3 ray=rayInit(uv);
+	
+	float a=noise(uv-time);
+	
+	fragColor=vec4(a ,0.0 ,0.,1.);
+}
+</script>
+<script src="ray_caster_shader.js" type="module">
+</script>
+
+	</body>
+</html>

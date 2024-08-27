@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "start": "vite",
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "type": "module",
+  "dependencies": {
+    "lil-gui": "^0.19.2",
+    "stats.js": "^0.17.0",
+    "three": "^0.167.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "glob": "^11.0.0"
+  }
+}

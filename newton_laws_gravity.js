@@ -1,7 +1,7 @@
-import  * as THREE from "../library/three.module.js"
-import  {GUI as InputPanel} from "../library/controler.gui.js";
-import  Stats from "../library/stats.module.js";
-import {OrbitControls} from "../library/ThreeJs/OrbitControls.js";
+import  * as THREE from "three"
+import  {GUI as InputPanel} from "lil-gui";
+import  Stats from "stats.js"
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 
 const log=console.log.bind(console);
 
