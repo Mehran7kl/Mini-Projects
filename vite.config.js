@@ -1,8 +1,9 @@
 import { defineConfig } from "vite";
 import { glob } from "glob";
 export default defineConfig(()=>{
-    
-    const g = glob.sync(__dirname+"/*.html");
+    let pattern=__dirname+"/*.html";
+    pattern=pattern.replace("//","/").replace("\\/","/");
+    const g = glob.sync(pattern);
     
     
 
