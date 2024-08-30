@@ -14,7 +14,6 @@
     "vite": "^5.4.2"
   },
   "devDependencies": {
-    "@types/node": "^22.5.0",
     "glob": "^11.0.0"
   }
 }
