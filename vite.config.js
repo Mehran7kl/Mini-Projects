@@ -7,7 +7,7 @@ export default defineConfig(()=>{
     
     return {
     base:"/Mini-Projects/",
-    define: {htmlFiles:g.map(file=> file.split("/").at(-1))},
+    define: {htmlFiles:g},
     build:{
         rollupOptions:{
             input: g
