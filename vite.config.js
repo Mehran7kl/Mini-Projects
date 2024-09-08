@@ -4,10 +4,10 @@ export default defineConfig(()=>{
     let pattern="./**/*.html";
     
     const g = glob.sync(pattern,{ignore:"./dist/**"}).map(str=>str.replace("\\","/"));
-    
+    const base = "/Mini-Projects/"
     return {
-    base:"/Mini-Projects/",
-    define: {htmlFiles:g},
+    base,
+    define: { myproject:{base,htmlFiles:g,}},
     build:{
         rollupOptions:{
             input: g
