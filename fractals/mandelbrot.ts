@@ -42,7 +42,6 @@ let viewport = {
 
 window.addEventListener("keypress",e=>{
     const sens = viewport.width/5;
-    console.log(e.key);
     
     switch(e.key)
     {
@@ -66,7 +65,7 @@ window.addEventListener("keypress",e=>{
             viewport.width*=0.9;
             break;
             
-        case "e": 
+        case "q": 
             viewport.width*=1.1;
             break;
     }
